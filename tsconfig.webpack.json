@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {    
+    "noEmit": false
+    // "rootDirs": [
+    //     "./app"
+    // ]  
+  },
+  "files": ["./src/client/index.tsx"],
+  "exclude": [
+    "src/server",
+    "node_modules",
+    "target",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest",
+    "__tests__",
+    "src/setupTests.ts",
+    "jest.config.js"
+  ]
+  // "include": [
+  //     "./app/**/*"
+  // ]
+}
