@@ -33,6 +33,16 @@ If you then go to `webpack.prod.config.js` and comment out the `purgecss` sectio
 
 Any help greatly appreciated!
 
+## Update 04.10.2019
+
+The problem was identified and resolved, thanks to [Gergely Tarjan](https://github.com/tailwindcss/discuss/issues/342)!
+
+While the purgecss extractor did grep the camel cased classes "largeFont, textColorBlue, textBlue800", these classes do not appear within the css files since they are kebab cased there (large-font, text-color-blue, text-blue-800).
+
+The solution was to change the extractor to add kebab-case versions of any camelCaseString that it could find in the document. And that worked. Have a look at the changed `webpack.prod.config.js` file.
+
+Thanks again for the quick and outstanding help of the Tailwind team!
+
 ## Installation
 
 ```bash

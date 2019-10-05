@@ -6,10 +6,22 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const cssnano = require("cssnano")
+const kebabCase = require("lodash/kebabCase")
 
+/**
+ * This extractor uses the tailwind suggested regexp to grep strings.
+ * In addition it transforms every camelCaseString into a kebab-case-string in
+ * order to actually find the css classes.
+ * How you change camel to kebab is up to you, make sure the used code also puts a dash in front of numbers,
+ * so textBlue800 becomes text-blue-800 and not text-blue800.
+ */
 class TailwindExtractor {
   static extract(content) {
-    return content.match(/[A-Za-z0-9-_:/]+/g) || []
+    const matches = content.match(/[A-Za-z0-9-_:/]+/g) || []
+    const kebab = matches.map(m => kebabCase(m))
+    return matches.concat(kebab).filter((value, index, self) => {
+      return self.indexOf(value) === index
+    })
   }
 }
 
@@ -71,8 +83,13 @@ module.exports = {
                 // require("autoprefixer"),
                 // If you comment out the purgecss section, everything works fine.
                 require("@fullhuman/postcss-purgecss")({
-                  content: ["./src/client/**/*.tsx"],
-                  defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || []
+                  content: ["./src/client/**/*.tsx", "./resources/public/index.html"],
+                  extractors: [
+                    {
+                      extractor: TailwindExtractor,
+                      extensions: ["html", "tsx"]
+                    }
+                  ]
                 })
                 // cssnano()
               ]
